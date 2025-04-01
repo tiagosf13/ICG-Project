@@ -9,7 +9,9 @@ const STAR_RADIUS = 5; // Radius of the star in Three.js units
 // Scene setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 20, STAR_RADIUS*2); // Move camera back to see planets
+camera.position.set(0, 40, STAR_RADIUS*10); // Move camera back to see planets
+// Incline the camera to look down at the solar system
+camera.rotation.x = -Math.PI / 6; // 30 degrees down
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);

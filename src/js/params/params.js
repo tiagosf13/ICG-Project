@@ -4,7 +4,7 @@ export const params = {
     MIN_DIAMETER: 4879, // Diameter in Km
     MAX_DIAMETER: 14298, // Diameter in Km
     MIN_PLANET_DISTANCE: 0.40 * 3*2, // Minimum distance between planets in AU
-    STAR_PLANET_RATIO: 5, // Ratio between the star and the planets
+    STAR_PLANET_RATIO: 10, // Ratio between the star and the planets
     MIN_DISTANCE_2_STAR: 0.39 * 3*2, // Distance in AU ---> 0.39 * (STAR_PLANET_RATIO*2)
     MAX_DISTANCE_2_STAR: 30 * 3*2, // Distance in AU --> 30 * (STAR_PLANET_RATIO*2)
     MIN_PERIOD: 1, // Period in Earth years
@@ -14,7 +14,7 @@ export const params = {
     PLANETTEXTURES: [
         'earth_clouds.jpg', 'earth_daymap.jpg', 'earth_nightmap.jpg', 'jupiter.jpg', 
         'mars.jpg', 'mercury.jpg', 'moon.jpg', 'neptune.jpg',
-        'saturn.jpg', 'uranus.jpg', 'venus_atmosphere.jpg', 'venus_surface.jpg'
+        'saturn.jpg', 'uranus.jpg', 'venus_atmosphere.jpg'
     ],
     STARTTEXTURES: [
         'sun-surface.jpg'
