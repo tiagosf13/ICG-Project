@@ -1,11 +1,9 @@
 import * as THREE from 'three';
-
-const ORBIT_SEGMENTS = 128;
-const ORBIT_RADIUS = 5;
+import { params } from 'params';
 
 // Orbit class
 class Orbit {
-    constructor(radius = ORBIT_RADIUS, segments = ORBIT_SEGMENTS) {
+    constructor(radius = params.ORBIT_RADIUS, segments = params.ORBIT_SEGMENTS) {
         this.radius = radius;
         this.segments = segments;
         this.eccentricity = Math.random() * 0.3; // Slight eccentricity (0 to 0.3)

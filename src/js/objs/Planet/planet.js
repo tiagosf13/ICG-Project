@@ -3,59 +3,95 @@ import { Orbit } from '../Orbit/orbit.js';
 import { params } from 'params';
 
 export class Planet {
-    // Add a new constant for controlling the minimum distance between planets
-
     constructor(
         name,
         radius,
         position,
         rotationSpeed,
         isStar = false,
+        isMoon = false,
         texture,
         widthSegments = 32, 
         heightSegments = 32,
-        existingPlanets = [], // Pass in existing planets to check for overlap
-        star = null // Pass the star (the Sun) for overlap check
+        existingPlanets = [],
+        star = null,
+        center = null 
     ) {
         this.name = name || this.randomName();
-        this.radius = radius || (isStar ? (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO : this.randomDiameter() / 2);
-        
-        this.position = position || this.generateValidPosition(existingPlanets, star);
-        
-        this.rotationSpeed = rotationSpeed || this.randomRotationSpeed();
-        this.texture = texture || this.randomTexture(isStar);
+        if (isStar) {
+            this.radius = (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO; // Fixed radius for the star
+        }
+        else if (isMoon) {
+            this.radius = center.radius * params.MOON_PLANET_RATIO ; // Fixed radius for the moon
+        }
+        else {
+            this.radius = radius || (this.randomDiameter() / 2); // Random radius for planets
+        }
     
+        console.log("Artifacts: ", existingPlanets);
+        this.rotationSpeed = rotationSpeed || this.randomRotationSpeed();
+        this.texture = texture || this.randomTexture(isStar, isMoon);
+        
+        // If its a moon, the color should be red
+        if (isMoon) {
+            this.texture = "/src/textures/sun-surface.jpg"; // Set a default texture for the moon
+        }
+        
+        this.star = star;
+        this.isStar = isStar;
+        this.isPlanet = !isStar && !isMoon;
+        this.isMoon = isMoon;
+        this.center = center || star;
+        this.moons = [];
+        this.position = position || this.generateValidPosition(existingPlanets, star, isStar, isMoon);
+        this.orbit = isMoon 
+            ? new Orbit(this.position.distanceTo(center.mesh.position)) 
+            : new Orbit(this.position.length());
         this.mesh = this.createMesh(widthSegments, heightSegments, this.texture);
-        this.orbit = new Orbit(this.position.length());
-        this.star = star; // Store the star reference
     }
 
+    addMoon(moon) {
+        this.moons.push(moon);
+        // Attach moon mesh and orbit to this planet's mesh
+        this.mesh.add(moon.mesh);                     // So moon orbits relative to the planet
+        this.mesh.add(moon.orbit.trajectory);         // Show the moon's orbital path around the planet
+    }    
+
     updateOrbit(orbitSpeed) {
-        this.orbit.orbitAngle += orbitSpeed; // Increment the angle
+        this.orbit.orbitAngle += orbitSpeed;
     
-        const starPosition = this.star ? this.star.mesh.position : new THREE.Vector3(0, 0, 0);
+        // Get the center position in world space
+        const centerWorldPos = new THREE.Vector3();
+        if (this.center && this.center.mesh) {
+            this.center.mesh.getWorldPosition(centerWorldPos);
+        }
     
         // Calculate elliptical orbit radius
         const r = this.orbit.radius * (1 - this.orbit.eccentricity * Math.cos(this.orbit.orbitAngle));
     
-        // Compute X and Z positions
+        // Compute position in local (orbit) space
         const x = r * Math.cos(this.orbit.orbitAngle);
         const z = r * Math.sin(this.orbit.orbitAngle);
-    
-        // Create a new 3D position vector before applying inclination
         let newPosition = new THREE.Vector3(x, 0, z);
     
-        // Apply inclination using the orbit's rotation matrix
+        // Apply inclination rotation
         const inclinationMatrix = new THREE.Matrix4().makeRotationX(this.orbit.inclination);
         newPosition.applyMatrix4(inclinationMatrix);
     
-        // Set the final position relative to the star
-        this.mesh.position.set(
-            starPosition.x + newPosition.x,
-            starPosition.y + newPosition.y,
-            starPosition.z + newPosition.z
-        );
-    }           
+        // Final position in world space
+        const finalWorldPosition = centerWorldPos.clone().add(newPosition);
+    
+        // If the mesh has a parent (like moons), convert world position to local
+        if (this.isMoon && this.center && this.center.mesh) {
+            // Since the moon mesh is added to the planet mesh, position is local
+            this.mesh.position.set(newPosition.x, newPosition.y, newPosition.z);
+        } else if (this.mesh.parent) {
+            const localPos = this.mesh.parent.worldToLocal(finalWorldPosition.clone());
+            this.mesh.position.copy(localPos);
+        } else {
+            this.mesh.position.copy(finalWorldPosition);
+        }        
+    }             
 
     // Load and apply texture (if exists) or set default color
     createMesh(widthSegments, heightSegments, texture) {
@@ -73,6 +109,7 @@ export class Planet {
         mesh.position.set(this.position.x, this.position.y, this.position.z);
         return mesh;
     }
+    
 
     // Check if the new position overlaps with any existing planet or the star
     checkOverlap(existingPlanets, star) {
@@ -98,26 +135,56 @@ export class Planet {
     }
 
     // Generate a valid position that does not overlap with any other planet or the star
-    generateValidPosition(existingPlanets, star) {
+    generateValidPosition(existingPlanets, star, isStar = false, isMoon = false) {
         let position;
         let overlap = true;
-
+    
         while (overlap) {
-            position = new THREE.Vector3(this.randomDistance2Star(), 0, 0); // Random position
-            this.position = position; // Assign the position
-
-            // Check for overlap with the star and other planets
-            overlap = this.checkOverlap(existingPlanets, star);
+            if (isStar) {
+                position = new THREE.Vector3(0, 0, 0); // Star is at the origin
+            }
+            else if (isMoon && this.center) {
+                // Generate a position relative to the planet this moon orbits
+                const distance = this.randomDistance2Planet();
+                const angle = Math.random() * 2 * Math.PI;
+                const offsetX = distance * Math.cos(angle);
+                const offsetZ = distance * Math.sin(angle);
+    
+                const centerPos = this.center.mesh.position;
+                position = new THREE.Vector3(
+                    centerPos.x + offsetX,
+                    centerPos.y,
+                    centerPos.z + offsetZ
+                )
+            } else {
+                // Generate a position relative to the star
+                const distance = this.randomDistance2Star();
+                const angle = Math.random() * 2 * Math.PI;
+                const offsetX = distance * Math.cos(angle);
+                const offsetZ = distance * Math.sin(angle);
+    
+                position = new THREE.Vector3(offsetX, 0, offsetZ);
+            }
+    
+            this.position = position; // Temporarily assign the position for overlap check
+            overlap = isStar ? false : this.checkOverlap(existingPlanets, star);
         }
-
-        return position; // Return valid position after overlap check
-    }
+    
+        return position;
+    }    
 
     // Generate a random texture for the planet or star
-    randomTexture(isStar) {
-        const texturePath = isStar
-            ? params.STARTTEXTURES[Math.floor(Math.random() * params.STARTTEXTURES.length)]
-            : params.PLANETTEXTURES[Math.floor(Math.random() * params.PLANETTEXTURES.length)];
+    randomTexture(isStar, isMoon) {
+        let texturePath = null;
+        if (isStar) {
+            texturePath = params.STARTTEXTURES[Math.floor(Math.random() * params.STARTTEXTURES.length)]
+        }
+        else if (isMoon) {
+            texturePath = params.MOONTEXTURES[Math.floor(Math.random() * params.MOONTEXTURES.length)]
+        }
+        else {
+            texturePath = params.PLANETTEXTURES[Math.floor(Math.random() * params.PLANETTEXTURES.length)]
+        }
         return "/src/textures/" + texturePath;
     }
 
@@ -134,6 +201,11 @@ export class Planet {
     // Generate a random distance from the Sun for the planet
     randomDistance2Star() {
         return Math.random() * (params.MAX_DISTANCE_2_STAR - params.MIN_DISTANCE_2_STAR) + params.MIN_DISTANCE_2_STAR;
+    }
+
+    // Generate a random distance from the planet for the moon
+    randomDistance2Planet() {
+        return Math.random() * (params.MOON_MAX_DISTANCE_2_PLANET - params.MOON_MIN_DISTANCE_2_PLANET) + params.MOON_MIN_DISTANCE_2_PLANET;
     }
 
     // Generate a random period for the planet
