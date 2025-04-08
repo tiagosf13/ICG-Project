@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { params } from 'params';
+//import { params } from 'params';
+import { params }  from '../../params/params.js';
 
 // Orbit class
 class Orbit {

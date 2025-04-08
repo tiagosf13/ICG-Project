@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar System Project</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-    </style>
+    <link rel="stylesheet" href="/src/css/main.css">
 </head>
 <body>
+    <div id="topControls">
+        <input type="file" id="jsonFileInput" accept=".json" />
+        <button id="downloadBtn">Download System</button>
+    </div>
+    <div id="systemNameDisplay">🌌 Default System</div>
+
+
     <!-- The library -->
     <!-- CDN -->
     <script type="importmap">
@@ -24,6 +29,8 @@
         }        
 	</script>
     <script type="module" src="/src/js/main.js"></script>
+    <script type="module" src="/src/js/inputs.js"></script>
+    <script type="module" src="/src/js/outputs.js"></script>
     <!-- Div which will hold the renderer output -->
 
 	<div id="WebGL-output"> </div>

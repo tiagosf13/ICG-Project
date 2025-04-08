@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Orbit } from '../Orbit/orbit.js';
-import { params } from 'params';
+//import { params } from 'params';
+import { params }  from '../../params/params.js';
 
 export class Planet {
     constructor(
@@ -15,27 +16,23 @@ export class Planet {
         heightSegments = 32,
         existingPlanets = [],
         star = null,
-        center = null 
+        center = null,
+        noRendering=false
     ) {
         this.name = name || this.randomName();
         if (isStar) {
-            this.radius = (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO; // Fixed radius for the star
+            this.radius = radius || (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO; // Fixed radius for the star
         }
         else if (isMoon) {
-            this.radius = center.radius * params.MOON_PLANET_RATIO ; // Fixed radius for the moon
+            this.radius = radius || center.radius * params.MOON_PLANET_RATIO ; // Fixed radius for the moon
         }
         else {
             this.radius = radius || (this.randomDiameter() / 2); // Random radius for planets
         }
-    
-        console.log("Artifacts: ", existingPlanets);
+
         this.rotationSpeed = rotationSpeed || this.randomRotationSpeed();
-        this.texture = texture || this.randomTexture(isStar, isMoon);
         
-        // If its a moon, the color should be red
-        if (isMoon) {
-            this.texture = "/src/textures/sun-surface.jpg"; // Set a default texture for the moon
-        }
+        this.texture = texture || this.randomTexture(isStar, isMoon);
         
         this.star = star;
         this.isStar = isStar;
@@ -45,16 +42,16 @@ export class Planet {
         this.moons = [];
         this.position = position || this.generateValidPosition(existingPlanets, star, isStar, isMoon);
         this.orbit = isMoon 
-            ? new Orbit(this.position.distanceTo(center.mesh.position)) 
+            ? new Orbit(this.position.distanceTo(center.position)) 
             : new Orbit(this.position.length());
-        this.mesh = this.createMesh(widthSegments, heightSegments, this.texture);
+        this.mesh = noRendering ? null : this.createMesh(widthSegments, heightSegments, this.texture);
     }
 
     addMoon(moon) {
         this.moons.push(moon);
         // Attach moon mesh and orbit to this planet's mesh
-        this.mesh.add(moon.mesh);                     // So moon orbits relative to the planet
-        this.mesh.add(moon.orbit.trajectory);         // Show the moon's orbital path around the planet
+        this.mesh?.add(moon.mesh);                     // So moon orbits relative to the planet
+        this.mesh?.add(moon.orbit.trajectory);         // Show the moon's orbital path around the planet
     }    
 
     updateOrbit(orbitSpeed) {
@@ -150,7 +147,7 @@ export class Planet {
                 const offsetX = distance * Math.cos(angle);
                 const offsetZ = distance * Math.sin(angle);
     
-                const centerPos = this.center.mesh.position;
+                const centerPos = this.center.position;
                 position = new THREE.Vector3(
                     centerPos.x + offsetX,
                     centerPos.y,
