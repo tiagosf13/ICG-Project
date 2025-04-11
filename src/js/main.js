@@ -1,11 +1,11 @@
-import * as THREE from 'three';
+//import * as THREE from 'three';
+import * as THREE from 'https://esm.sh/three@latest';
 import { PointerLockControls } from 'threePointerLockControls';
 import { params } from 'params';
-import { Planet } from 'planet';
 import { SolarSystem } from 'solarSystem';
 
 // Scene
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -18,21 +18,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Solar System
-const solarSystem = new SolarSystem();
+export let solarSystem = new SolarSystem(scene);
 scene.add(solarSystem.object);
-
-// Star
-const star = new Planet(
-    'Star',                        // name
-    10,                            // radius
-    new THREE.Vector3(0, 0, 0),    // position
-    0,                             // rotationSpeed
-    true                           // isStar
-);
-solarSystem.setStar(star, scene);
-
-// Planets
-solarSystem.createPlanets(8); // Create 8 planets
 
 // Controls
 const controls = new PointerLockControls(camera, document.body);
@@ -50,14 +37,56 @@ document.addEventListener('keyup', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = false;
 });
 
+export function replaceSolarSystem(newSystem) {
+    
+    // TODO: optionally dispose of geometry/textures if needed
+    // Dispose of the old solar system
+    solarSystem.moons.forEach(moon => {
+        disposeObject3D(moon.mesh);
+        scene.remove(moon.orbit.object);
+    });
+    solarSystem.planets.forEach(planet => {
+        disposeObject3D(planet.mesh);
+        scene.remove(planet.orbit.object);
+    });
+    disposeObject3D(solarSystem.star.mesh);
+    scene.remove(solarSystem.star.orbit.object);
+    // Dispose of the star if needed
+    if (solarSystem.star) {
+        disposeObject3D(solarSystem.star.mesh);
+        scene.remove(solarSystem.star.orbit.object);
+    }
+    // Remove old one from the scene
+    disposeObject3D(solarSystem.object);
+    scene.remove(solarSystem.object);
+    
+    // Add new one
+    solarSystem = newSystem;
+    scene.add(solarSystem.object);
+}
+
+function disposeObject3D(obj) {
+    obj.traverse(child => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+            if (Array.isArray(child.material)) {
+                child.material.forEach(m => m.dispose());
+            } else {
+                child.material.dispose();
+            }
+        }
+    });
+}
+
+
 // Animate loop
 function animate() {
     requestAnimationFrame(animate);
 
-    solarSystem.artifacts.forEach(planet => {
+    [...solarSystem.moons, ...solarSystem.planets].forEach(planet => {
 
         const orbitSpeed = planet.isMoon ? (2 * Math.PI) / (planet.orbit.radius * 50) : (2 * Math.PI) / (planet.orbit.radius * 500); // Adjust the divisor for a realistic speed
-        planet.updateRotationSpeed()
+        planet.updateRotationSpeed();
         planet.updateOrbit(orbitSpeed);
     });
 

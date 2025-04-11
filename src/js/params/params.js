@@ -1,5 +1,6 @@
 
 export const params = {
+    NUMBER_OF_PLANETS: 8, // Number of planets to generate
     DIAMETER_SCALE_FACTOR: 1/1000, // Scaling factor for the scene
     MIN_DIAMETER: 4879, // Diameter in Km
     MAX_DIAMETER: 14298, // Diameter in Km
@@ -9,7 +10,7 @@ export const params = {
     MOON_MAX_DISTANCE_2_PLANET: 4 * 3*2, // Maximum distance from the planet in AU
     MOON_MIN_DISTANCE_2_PLANET: 1 * 3*2, // Minimum distance from the planet in AU
     STAR_RADIUS: 5, // Radius of the star in Three.js units
-    STAR_PLANET_RATIO: 10, // Ratio between the star and the planets
+    STAR_PLANET_RATIO: 7, // Ratio between the star and the planets
     MIN_DISTANCE_2_STAR: 0.39 * 3*2, // Distance in AU ---> 0.39 * (STAR_PLANET_RATIO*2)
     MAX_DISTANCE_2_STAR: 30 * 3*2, // Distance in AU --> 30 * (STAR_PLANET_RATIO*2)
     MIN_PERIOD: 1, // Period in Earth years
