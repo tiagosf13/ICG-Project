@@ -33,7 +33,7 @@ export class Planet {
         
         // If its a moon, the color should be red
         if (isMoon) {
-            this.texture = "/src/textures/sun-surface.jpg"; // Set a default texture for the moon
+            this.texture = "src/textures/sun-surface.jpg"; // Set a default texture for the moon
         }
         
         this.star = star;
@@ -184,7 +184,7 @@ export class Planet {
         else {
             texturePath = params.PLANETTEXTURES[Math.floor(Math.random() * params.PLANETTEXTURES.length)]
         }
-        return "./src/textures/" + texturePath;
+        return "src/textures/" + texturePath;
     }
 
     // Generate a random name for the planet
