@@ -28,7 +28,6 @@ export class Planet {
             this.radius = radius || (this.randomDiameter() / 2); // Random radius for planets
         }
     
-        console.log("Artifacts: ", existingPlanets);
         this.rotationSpeed = rotationSpeed || this.randomRotationSpeed();
         this.texture = texture || this.randomTexture(isStar, isMoon);
         
