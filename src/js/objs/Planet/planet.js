@@ -182,7 +182,7 @@ export class Planet {
         else {
             texturePath = params.PLANETTEXTURES[Math.floor(Math.random() * params.PLANETTEXTURES.length)]
         }
-        return "/src/textures/" + texturePath;
+        return "src/textures/" + texturePath;
     }
 
     // Generate a random name for the planet
