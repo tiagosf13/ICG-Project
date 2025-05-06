@@ -12,8 +12,8 @@ export class Planet {
         isStar = false,
         isMoon = false,
         texture,
-        widthSegments = 32, 
-        heightSegments = 32,
+        widthSegments = 16, 
+        heightSegments = 16, // testar com menos
         existingPlanets = [],
         star = null,
         center = null,

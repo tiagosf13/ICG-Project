@@ -91,3 +91,25 @@ body {
     text-transform: uppercase;
     text-align: center;
 }
+
+#minimapContainer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 250px;
+    height: 250px;
+    border: 1px solid #0ff;
+    z-index: 10;
+}
+
+#miniMapFrame {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 250px;
+    height: 250px;
+    border: 1px solid #0ff;
+    pointer-events: none; /* Don't block interaction */
+    z-index: 10;
+}
+
