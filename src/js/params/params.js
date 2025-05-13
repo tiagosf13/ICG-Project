@@ -8,7 +8,7 @@ export const params = {
     MOON_PROBABILITY: 0.4, // 40% chance of getting a moon
     MOON_PLANET_RATIO: 0.5, // Ratio between the moon and the planet
     MOON_MAX_DISTANCE_2_PLANET: 4 * 3*2, // Maximum distance from the planet in AU
-    MOON_MIN_DISTANCE_2_PLANET: 1 * 3*2, // Minimum distance from the planet in AU
+    MOON_MIN_DISTANCE_2_PLANET: 2 * 3*2, // Minimum distance from the planet in AU
     STAR_RADIUS: 5, // Radius of the star in Three.js units
     STAR_PLANET_RATIO: 7, // Ratio between the star and the planets
     MIN_DISTANCE_2_STAR: 0.39 * 3*2, // Distance in AU ---> 0.39 * (STAR_PLANET_RATIO*2)

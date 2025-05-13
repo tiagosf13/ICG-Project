@@ -91,3 +91,37 @@ body {
     text-transform: uppercase;
     text-align: center;
 }
+
+
+#minimapContainer {
+    position: absolute;
+    top: 0%;
+    right: 20px;
+    border: 1px solid #0ff;
+    margin: 10px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#centeredImageContainer {
+    position: absolute; /* Or fixed if you want it overlaying everything */
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5; /* Make sure it's above the canvas (usually z-index: 0) */
+    pointer-events: none; /* Optional if you want clicks to pass through */
+}
+
+#minimap_arrow {
+    max-width: 25px;
+    max-height: 25px;
+    object-fit: contain;
+}
+
