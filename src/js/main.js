@@ -5,8 +5,8 @@ import { params } from 'params';
 import { SolarSystem } from 'solarSystem';
 
 
-const miniCameraMinY = 20;
-const miniCameraMaxY = 500;
+const miniCameraMinY = 10;
+const miniCameraMaxY = 200;
 
 // Scene
 export const scene = new THREE.Scene();
@@ -56,7 +56,7 @@ document.addEventListener('keyup', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = false;
 });
 
-const zoomSpeed = 20;
+const zoomSpeed = 4;
 let miniFrustumSize = 300;
 
 function updateMiniCameraFrustum(size) {
@@ -71,7 +71,7 @@ updateMiniCameraFrustum(miniFrustumSize);
 
 document.addEventListener('wheel', (event) => {
     const delta = event.deltaY > 0 ? 1 : -1;
-    miniFrustumSize = THREE.MathUtils.clamp(miniFrustumSize + delta * zoomSpeed, 50, 1000);
+    miniFrustumSize = THREE.MathUtils.clamp(miniFrustumSize + delta * zoomSpeed, miniCameraMinY, miniCameraMaxY);
     updateMiniCameraFrustum(miniFrustumSize);
 });
 
