@@ -56,8 +56,8 @@ document.addEventListener('keyup', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = false;
 });
 
-const zoomSpeed = 4;
-let miniFrustumSize = 300;
+const zoomSpeed = 0.5;
+let miniFrustumSize = 200;
 
 function updateMiniCameraFrustum(size) {
     miniCamera.top = size;
@@ -69,11 +69,25 @@ function updateMiniCameraFrustum(size) {
 
 updateMiniCameraFrustum(miniFrustumSize);
 
+let targetFrustumSize = miniFrustumSize;
+
 document.addEventListener('wheel', (event) => {
-    const delta = event.deltaY > 0 ? 1 : -1;
-    miniFrustumSize = THREE.MathUtils.clamp(miniFrustumSize + delta * zoomSpeed, miniCameraMinY, miniCameraMaxY);
-    updateMiniCameraFrustum(miniFrustumSize);
+    let zoomDelta = event.deltaY;
+
+    // Normalize if deltaMode is in lines instead of pixels
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        zoomDelta /= 20; // Or a value that works well on your system
+    }
+
+    const zoomStep = zoomDelta * zoomSpeed; // Adjust this multiplier as needed
+    targetFrustumSize = THREE.MathUtils.clamp(
+        targetFrustumSize + zoomStep,
+        miniCameraMinY,
+        miniCameraMaxY
+    );
 });
+
+
 
 
 
@@ -169,6 +183,9 @@ function animate() {
     miniCamera.up.set(Math.sin(yaw), 0, Math.cos(yaw));
     // Y stays fixed so it's always looking down from above
     miniCamera.lookAt(new THREE.Vector3(camera.position.x, 0, camera.position.z));
+
+    miniFrustumSize = THREE.MathUtils.lerp(miniFrustumSize, targetFrustumSize, 0.1);
+    updateMiniCameraFrustum(miniFrustumSize);
 
     // Render the scene
     renderer.render(scene, camera);

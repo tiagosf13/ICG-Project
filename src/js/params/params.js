@@ -20,15 +20,15 @@ export const params = {
     ORBIT_SEGMENTS: 128, // Number of segments for the orbit
     ORBIT_RADIUS: 5, // Default orbit radius in Three.js units
     PLANETTEXTURES: [
-        'earth_clouds.jpg', 'earth_daymap.jpg', 'earth_nightmap.jpg', 'jupiter.jpg', 
-        'mars.jpg', 'mercury.jpg', 'moon.jpg', 'neptune.jpg',
-        'saturn.jpg', 'uranus.jpg', 'venus_atmosphere.jpg'
+        'earth_clouds75.jpg', 'earth_daymap75.jpg', 'earth_nightmap75.jpg', 'jupiter75.jpg', 
+        'mars75.jpg', 'mercury75.jpg', 'moon75.jpg', 'neptune75.jpg',
+        'saturn75.jpg', 'uranus75.jpg', 'venus_atmosphere75.jpg'
     ],
     STARTTEXTURES: [
-        'sun-surface.jpg'
+        'sun-surface75.jpg'
     ],
     MOONTEXTURES: [
-        'moon.jpg'
+        'moon75.jpg'
     ],
     PLANETNAMES: [
         'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'
