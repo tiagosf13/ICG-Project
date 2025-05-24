@@ -15,10 +15,11 @@ export const params = {
     MAX_DISTANCE_2_STAR: 30 * 3*2, // Distance in AU --> 30 * (STAR_PLANET_RATIO*2)
     MIN_PERIOD: 1, // Period in Earth years
     MAX_PERIOD: 10000, // Period in Earth years
-    MIN_ROTATION_SPEED: 1/2500, // Rotation speed in Earth days
-    MAX_ROTATION_SPEED: 1/1000, // Rotation speed in Earth days
+    MIN_ROTATION_SPEED: 1/100, // Rotation speed in Earth days
+    MAX_ROTATION_SPEED: 1, // Rotation speed in Earth days
     ORBIT_SEGMENTS: 128, // Number of segments for the orbit
     ORBIT_RADIUS: 5, // Default orbit radius in Three.js units
+    MIN_CARD_DISTANCE_2_PLANET: 50, // Minimum distance from the planet to show the card
     PLANETTEXTURES: [
         'earth_clouds75.jpg', 'earth_daymap75.jpg', 'earth_nightmap75.jpg', 'jupiter75.jpg', 
         'mars75.jpg', 'mercury75.jpg', 'moon75.jpg', 'neptune75.jpg',

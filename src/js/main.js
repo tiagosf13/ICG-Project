@@ -132,17 +132,33 @@ function disposeObject3D(obj) {
     });
 }
 
+function toScreenPosition(obj, camera) {
+    const vector = new THREE.Vector3();
+    obj.getWorldPosition(vector);
+    vector.project(camera);
 
+    return {
+        x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+        y: (-vector.y * 0.5 + 0.5) * window.innerHeight
+    };
+}
+
+
+let lastTime = performance.now();
 // Animate loop
 function animate() {
     requestAnimationFrame(animate);
+
+    let now = performance.now();
+    let deltaTime = (now - lastTime) / 1000; // seconds elapsed since last frame
+    lastTime = now;
 
     // Update planetary positions
     [...solarSystem.moons, ...solarSystem.planets].forEach(planet => {
         const orbitSpeed = planet.isMoon 
             ? (2 * Math.PI) / (planet.orbit.radius * 50) 
             : (2 * Math.PI) / (planet.orbit.radius * 500);
-        planet.updateRotationSpeed();
+        planet.updateRotationSpeed(deltaTime);
         planet.updateOrbit(orbitSpeed);
     });
 
@@ -187,10 +203,68 @@ function animate() {
     miniFrustumSize = THREE.MathUtils.lerp(miniFrustumSize, targetFrustumSize, 0.1);
     updateMiniCameraFrustum(miniFrustumSize);
 
+    // Planet card update
+    const cameraPos = camera.position;
+    const viewDir = new THREE.Vector3();
+    camera.getWorldDirection(viewDir);
+
+    [...solarSystem.planets, ...solarSystem.moons].forEach(body => {
+        if (!body.mesh) return;
+
+        const bodyPos = new THREE.Vector3();
+        body.mesh.getWorldPosition(bodyPos);
+
+        const distance = cameraPos.distanceTo(bodyPos);
+        if (distance > params.MIN_CARD_DISTANCE_2_PLANET) {
+            if (planetCards.has(body.id)) {
+                planetCards.get(body.id).style.display = 'none';
+            }
+            return;
+        }
+
+        const dirToBody = bodyPos.clone().sub(cameraPos).normalize();
+        const angle = viewDir.angleTo(dirToBody);
+
+        if (angle < Math.PI / 4) {
+            const cardId = body.id;
+            let card = planetCards.get(cardId);
+
+            if (!card) {
+                card = document.createElement('div');
+                card.className = 'planet-card';
+
+                card.innerHTML = `
+                    <div>${body.isMoon ? `🌙 ${body.name}` : `🪐 ${body.name}`}</div>
+                    <div>Radius: ${typeof body.radius === 'number' ? body.radius.toFixed(2) : 'N/A'} km</div>
+                    <div>Distance to star: ${body.orbit?.radius != null ? body.orbit.radius.toFixed(2) : 'N/A'} AU</div>
+                    <div>Period: ${body.orbit?.period != null ? body.orbit.period.toFixed(2) : 'N/A'} years</div>
+                    <div>Rotation speed: ${typeof body.rotationSpeed === 'number' ? Math.abs(body.rotationSpeed).toFixed(4) : 'N/A'} rad/day</div>
+                    <div>Day length: ${typeof body.dayLength === 'number' ? body.dayLength.toFixed(2) : 'N/A'} days</div>
+                `;
+
+                infoContainer.appendChild(card);
+                planetCards.set(cardId, card);
+            }
+
+            card.style.display = 'block';
+
+            const screenPos = toScreenPosition(body.mesh, camera);
+            card.style.left = `${screenPos.x}px`;
+            card.style.top = `${screenPos.y}px`;
+
+        } else {
+            if (planetCards.has(body.id)) {
+                planetCards.get(body.id).style.display = 'none';
+            }
+        }
+    });
+
     // Render the scene
     renderer.render(scene, camera);
     miniRenderer.render(scene, miniCamera);
 }
+const infoContainer = document.getElementById('planetInfoContainer');
+const planetCards = new Map(); // planetName -> cardElement
 
 animate();
 
