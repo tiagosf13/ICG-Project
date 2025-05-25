@@ -7,6 +7,9 @@ import { SolarSystem } from 'solarSystem';
 
 const miniCameraMinY = 10;
 const miniCameraMaxY = 200;
+let orbitSpeedMultiplier = 1.0;
+const orbitSpeedStep = 0.1;
+
 
 // Scene
 export const scene = new THREE.Scene();
@@ -70,9 +73,20 @@ renderer.domElement.addEventListener('click', () => controls.lock());
 const moveSpeed = 0.6;
 const keys = { KeyW: false, KeyA: false, KeyS: false, KeyD: false, Space: false, ShiftLeft: false };
 
+const orbitSpeedDisplay = document.getElementById('orbitSpeedDisplay');
+
+
 document.addEventListener('keydown', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = true;
+
+    if (event.code === 'ArrowUp') {
+        orbitSpeedMultiplier = Math.min(orbitSpeedMultiplier + orbitSpeedStep, 50); // cap at 10x
+    }
+    if (event.code === 'ArrowDown') {
+        orbitSpeedMultiplier = Math.max(orbitSpeedMultiplier - orbitSpeedStep, 0.1); // floor at 0.1x
+    }
 });
+
 
 document.addEventListener('keyup', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = false;
@@ -178,8 +192,9 @@ function animate() {
     // Update planetary positions
     [...solarSystem.moons, ...solarSystem.planets].forEach(planet => {
         const orbitSpeed = planet.isMoon 
-            ? (2 * Math.PI) / (planet.orbit.radius * 50) 
-            : (2 * Math.PI) / (planet.orbit.radius * 500);
+            ? (2 * Math.PI) / (planet.orbit.radius * 50) * orbitSpeedMultiplier
+            : (2 * Math.PI) / (planet.orbit.radius * 500) * orbitSpeedMultiplier;
+        orbitSpeedDisplay.textContent = `Speed: ${orbitSpeedMultiplier.toFixed(1)}x`;
         planet.updateRotationSpeed(deltaTime);
         planet.updateOrbit(orbitSpeed);
     });

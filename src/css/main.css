@@ -23,6 +23,7 @@ body {
     display: flex;
     gap: 20px;
     z-index: var(--z-controls);
+    width: 40vw;
 }
 
 /* Upload File Input */
@@ -53,12 +54,14 @@ body {
 
 #jsonFileInput::before {
     content: '🪐 Upload Solar System';
-    display: inline-block;
+    display: inline-flex;
     color: #0ff;
     font-weight: bold;
     background: transparent;
-    padding: 5px 10px;
+    padding: 1vh 0.5vw;
     border-radius: 5px;
+    align-items: center;
+    text-align: center;
 }
 
 /* Download Button */
@@ -244,4 +247,15 @@ body {
 #toggleControlsLabel input[type="checkbox"]:checked::before {
     transform: translateX(20px);
     background: #000;
+}
+
+
+#orbitSpeedDisplay {
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 1vh 1vw;
+    border-radius: 4px;
+    align-items: center;
+    display: flex;
 }
