@@ -1,0 +1,240 @@
+{
+  "name": "generatedSystem_17",
+  "star": {
+    "name": "Star",
+    "radius": 33.00438513710378,
+    "position": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotationSpeed": 4.447279822592784,
+    "isStar": true,
+    "isMoon": false,
+    "texture": "src/textures/sun-surface75.jpg"
+  },
+  "planets": [
+    {
+      "name": "Neptune",
+      "radius": 6.013555272304071,
+      "position": {
+        "x": 89.91810097825777,
+        "y": 0,
+        "z": -79.62072280020698
+      },
+      "rotationSpeed": 3.127519935184156,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/saturn75.jpg",
+      "moons": [
+        {
+          "name": "Uranus",
+          "radius": 3.0067776361520355,
+          "position": {
+            "x": 86.05997068444229,
+            "y": 0,
+            "z": -66.03518696255595
+          },
+          "rotationSpeed": 1.9584384789787646,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        },
+        {
+          "name": "Earth",
+          "radius": 3.0067776361520355,
+          "position": {
+            "x": 110.27810055086655,
+            "y": 0,
+            "z": -82.81680685575523
+          },
+          "rotationSpeed": -0.41641006537433983,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Earth",
+      "radius": 5.988526136365932,
+      "position": {
+        "x": -17.345991362031086,
+        "y": 0,
+        "z": -138.79724341595565
+      },
+      "rotationSpeed": -0.17906095799707897,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/uranus75.jpg",
+      "moons": [
+        {
+          "name": "Saturn",
+          "radius": 2.994263068182966,
+          "position": {
+            "x": -31.567067521842063,
+            "y": 0,
+            "z": -141.00070466898686
+          },
+          "rotationSpeed": -3.6523758197732388,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Neptune",
+      "radius": 3.412775242172167,
+      "position": {
+        "x": 103.52550960446264,
+        "y": 0,
+        "z": -132.23641014344878
+      },
+      "rotationSpeed": -0.30201577516428046,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/moon75.jpg",
+      "moons": []
+    },
+    {
+      "name": "Uranus",
+      "radius": 5.212347054216221,
+      "position": {
+        "x": 38.22746340582951,
+        "y": 0,
+        "z": 117.21939065765406
+      },
+      "rotationSpeed": 2.029682041268686,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/mercury75.jpg",
+      "moons": []
+    },
+    {
+      "name": "Jupiter",
+      "radius": 5.389996372864747,
+      "position": {
+        "x": -78.46078138819664,
+        "y": 0,
+        "z": -112.1378378245237
+      },
+      "rotationSpeed": -1.2412571673715664,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/jupiter75.jpg",
+      "moons": [
+        {
+          "name": "Earth",
+          "radius": 2.6949981864323735,
+          "position": {
+            "x": -66.34166488087241,
+            "y": 0,
+            "z": -112.02886816658902
+          },
+          "rotationSpeed": 1.442829122655073,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mars",
+      "radius": 3.044617855837318,
+      "position": {
+        "x": 157.07433714275345,
+        "y": 0,
+        "z": -2.631936926190868
+      },
+      "rotationSpeed": -5.245362169028238,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/mercury75.jpg",
+      "moons": [
+        {
+          "name": "Venus",
+          "radius": 1.522308927918659,
+          "position": {
+            "x": 142.32579017594347,
+            "y": 0,
+            "z": 0.44714865382480307
+          },
+          "rotationSpeed": 1.874935926966536,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mercury",
+      "radius": 6.384445566534376,
+      "position": {
+        "x": -31.165390707404853,
+        "y": 0,
+        "z": -98.80890035978338
+      },
+      "rotationSpeed": -3.539695420004572,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/jupiter75.jpg",
+      "moons": [
+        {
+          "name": "Mars",
+          "radius": 3.192222783267188,
+          "position": {
+            "x": -22.19125637673841,
+            "y": 0,
+            "z": -110.81225789311459
+          },
+          "rotationSpeed": -0.5902395078077427,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        },
+        {
+          "name": "Neptune",
+          "radius": 3.192222783267188,
+          "position": {
+            "x": -42.97346333477213,
+            "y": 0,
+            "z": -80.5001550879935
+          },
+          "rotationSpeed": -3.005659914562445,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Mercury",
+      "radius": 4.096239172541224,
+      "position": {
+        "x": 106.22326726057602,
+        "y": 0,
+        "z": 53.76222415557535
+      },
+      "rotationSpeed": 1.7250302754310882,
+      "isStar": false,
+      "isMoon": false,
+      "texture": "src/textures/moon75.jpg",
+      "moons": [
+        {
+          "name": "Venus",
+          "radius": 2.048119586270612,
+          "position": {
+            "x": 100.65954999593889,
+            "y": 0,
+            "z": 69.2460798078003
+          },
+          "rotationSpeed": -0.5356671338495822,
+          "isStar": false,
+          "isMoon": true,
+          "texture": "src/textures/moon75.jpg"
+        }
+      ]
+    }
+  ]
+}

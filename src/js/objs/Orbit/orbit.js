@@ -4,7 +4,7 @@ import { params }  from '../../params/params.js';
 
 // Orbit class
 class Orbit {
-    constructor(radius = params.ORBIT_RADIUS, segments = params.ORBIT_SEGMENTS) {
+    constructor(radius = params.ORBIT_RADIUS, is_star = false, segments = params.ORBIT_SEGMENTS) {
         this.radius = radius;
         this.segments = segments;
         this.eccentricity = Math.random() * 0.3; // Slight eccentricity (0 to 0.3)
@@ -13,8 +13,16 @@ class Orbit {
         this.object = new THREE.Object3D();
         this.orbitAngle = Math.random() * Math.PI * 2;
         
+        // Kepler's third law approximation: T (years) = sqrt(a^3), a in AU
+        if (!is_star && this.radius) {
+            const a = this.radius; // radius is treated as semi-major axis in AU
+            this.period = Math.sqrt(Math.pow(a, 3));
+        } else {
+            this.period = null;
+        }
+
         // Apply inclination
-        this.trajectory.rotation.x = this.inclination;  // << Apply inclination to the trajectory
+        this.trajectory.rotation.x = this.inclination;  // Apply inclination to the trajectory
     }
 
     createTrajectory(radius, segments) {

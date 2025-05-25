@@ -29,6 +29,7 @@ miniCamera.lookAt(0, 0, 0);               // Look at the center
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true; // Enable shadow maps
 document.body.appendChild(renderer.domElement);
 // Minimap Renderer
 const miniRenderer = new THREE.WebGLRenderer({ antialias: true });
@@ -40,9 +41,30 @@ minimapContainer.appendChild(miniRenderer.domElement);
 export let solarSystem = new SolarSystem(scene);
 scene.add(solarSystem.object);
 
+
+// Star Light (PointLight for illuminating planets)
+const starLight = new THREE.PointLight(0xffffff, 100, 0, 1);
+// If still too dim, try 12, 15, or even 20. Iterate to find a good value.
+starLight.castShadow = true;
+starLight.shadow.mapSize.width = 2048;
+starLight.shadow.mapSize.height = 2048;
+starLight.shadow.camera.near = 0;
+starLight.shadow.camera.far = params.STAR_RADIUS * 150; // Ensure this covers your system for shadows
+
+if (solarSystem.star && solarSystem.star.mesh) {
+    starLight.position.copy(solarSystem.star.mesh.position);
+} else {
+    starLight.position.set(0, 0, 0);
+}
+scene.add(starLight);
+
+// Ambient Light (for subtle fill light on dark sides)
+const ambientLight = new THREE.AmbientLight(0x333333, 1.5);
+scene.add(ambientLight);
+
 // Controls
 const controls = new PointerLockControls(camera, document.body);
-document.addEventListener('click', () => controls.lock());
+renderer.domElement.addEventListener('click', () => controls.lock());
 
 // Movement variables
 const moveSpeed = 0.6;
@@ -56,8 +78,8 @@ document.addEventListener('keyup', (event) => {
     if (keys.hasOwnProperty(event.code)) keys[event.code] = false;
 });
 
-const zoomSpeed = 4;
-let miniFrustumSize = 300;
+const zoomSpeed = 0.5;
+let miniFrustumSize = 200;
 
 function updateMiniCameraFrustum(size) {
     miniCamera.top = size;
@@ -69,17 +91,25 @@ function updateMiniCameraFrustum(size) {
 
 updateMiniCameraFrustum(miniFrustumSize);
 
+let targetFrustumSize = miniFrustumSize;
+
 document.addEventListener('wheel', (event) => {
-    const delta = event.deltaY > 0 ? 1 : -1;
-    miniFrustumSize = THREE.MathUtils.clamp(miniFrustumSize + delta * zoomSpeed, miniCameraMinY, miniCameraMaxY);
-    updateMiniCameraFrustum(miniFrustumSize);
+    let zoomDelta = event.deltaY;
+
+    // Normalize if deltaMode is in lines instead of pixels
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        zoomDelta /= 20; // Or a value that works well on your system
+    }
+
+    const zoomStep = zoomDelta * zoomSpeed; // Adjust this multiplier as needed
+    targetFrustumSize = THREE.MathUtils.clamp(
+        targetFrustumSize + zoomStep,
+        miniCameraMinY,
+        miniCameraMaxY
+    );
 });
 
-
-
 export function replaceSolarSystem(newSystem) {
-    
-    // TODO: optionally dispose of geometry/textures if needed
     // Dispose of the old solar system
     solarSystem.moons.forEach(moon => {
         disposeObject3D(moon.mesh);
@@ -89,21 +119,27 @@ export function replaceSolarSystem(newSystem) {
         disposeObject3D(planet.mesh);
         scene.remove(planet.orbit.object);
     });
-    disposeObject3D(solarSystem.star.mesh);
-    scene.remove(solarSystem.star.orbit.object);
-    // Dispose of the star if needed
     if (solarSystem.star) {
         disposeObject3D(solarSystem.star.mesh);
         scene.remove(solarSystem.star.orbit.object);
     }
-    // Remove old one from the scene
     disposeObject3D(solarSystem.object);
     scene.remove(solarSystem.object);
-    
-    // Add new one
+
+    // Remove planet cards from DOM
+    planetCards.forEach(card => {
+        if (card.parentNode) {
+            card.parentNode.removeChild(card);
+        }
+    });
+    planetCards.clear();
+
+    // Add new solar system
     solarSystem = newSystem;
     scene.add(solarSystem.object);
+    updateOrbitVisibility();
 }
+
 
 function disposeObject3D(obj) {
     obj.traverse(child => {
@@ -118,17 +154,33 @@ function disposeObject3D(obj) {
     });
 }
 
+function toScreenPosition(obj, camera) {
+    const vector = new THREE.Vector3();
+    obj.getWorldPosition(vector);
+    vector.project(camera);
 
+    return {
+        x: (vector.x * 0.5 + 0.5) * window.innerWidth,
+        y: (-vector.y * 0.5 + 0.5) * window.innerHeight
+    };
+}
+
+
+let lastTime = performance.now();
 // Animate loop
 function animate() {
     requestAnimationFrame(animate);
+
+    let now = performance.now();
+    let deltaTime = (now - lastTime) / 1000; // seconds elapsed since last frame
+    lastTime = now;
 
     // Update planetary positions
     [...solarSystem.moons, ...solarSystem.planets].forEach(planet => {
         const orbitSpeed = planet.isMoon 
             ? (2 * Math.PI) / (planet.orbit.radius * 50) 
             : (2 * Math.PI) / (planet.orbit.radius * 500);
-        planet.updateRotationSpeed();
+        planet.updateRotationSpeed(deltaTime);
         planet.updateOrbit(orbitSpeed);
     });
 
@@ -170,18 +222,78 @@ function animate() {
     // Y stays fixed so it's always looking down from above
     miniCamera.lookAt(new THREE.Vector3(camera.position.x, 0, camera.position.z));
 
+    miniFrustumSize = THREE.MathUtils.lerp(miniFrustumSize, targetFrustumSize, 0.1);
+    updateMiniCameraFrustum(miniFrustumSize);
+
+    // Planet card update
+    const cameraPos = camera.position;
+    const viewDir = new THREE.Vector3();
+    camera.getWorldDirection(viewDir);
+
+    [...solarSystem.planets, ...solarSystem.moons].forEach(body => {
+        if (!body.mesh) return;
+
+        const bodyPos = new THREE.Vector3();
+        body.mesh.getWorldPosition(bodyPos);
+
+        const distance = cameraPos.distanceTo(bodyPos);
+        if (distance > params.MIN_CARD_DISTANCE_2_PLANET) {
+            if (planetCards.has(body.id)) {
+                planetCards.get(body.id).style.display = 'none';
+            }
+            return;
+        }
+
+        const dirToBody = bodyPos.clone().sub(cameraPos).normalize();
+        const angle = viewDir.angleTo(dirToBody);
+
+        if (angle < Math.PI / 4) {
+            const cardId = body.id;
+            let card = planetCards.get(cardId);
+
+            if (!card) {
+                card = document.createElement('div');
+                card.className = 'planet-card';
+
+                card.innerHTML = `
+                    <div>${body.isMoon ? `🌙 ${body.name}` : `🪐 ${body.name}`}</div>
+                    <div>Radius: ${typeof body.radius === 'number' ? body.radius.toFixed(2) : 'N/A'} km</div>
+                    <div>Distance to star: ${body.orbit?.radius != null ? body.orbit.radius.toFixed(2) : 'N/A'} AU</div>
+                    <div>Period: ${body.orbit?.period != null ? body.orbit.period.toFixed(2) : 'N/A'} years</div>
+                    <div>Rotation speed: ${typeof body.rotationSpeed === 'number' ? Math.abs(body.rotationSpeed).toFixed(4) : 'N/A'} rad/day</div>
+                    <div>Day length: ${typeof body.dayLength === 'number' ? body.dayLength.toFixed(2) : 'N/A'} days</div>
+                `;
+
+                infoContainer.appendChild(card);
+                planetCards.set(cardId, card);
+            }
+
+            card.style.display = 'block';
+
+            const screenPos = toScreenPosition(body.mesh, camera);
+            card.style.left = `${screenPos.x}px`;
+            card.style.top = `${screenPos.y}px`;
+
+        } else {
+            if (planetCards.has(body.id)) {
+                planetCards.get(body.id).style.display = 'none';
+            }
+        }
+    });
+
+    if (solarSystem.star?.mesh) {
+        starLight.position.copy(solarSystem.star.mesh.getWorldPosition(new THREE.Vector3()));
+    }
+
+
     // Render the scene
     renderer.render(scene, camera);
     miniRenderer.render(scene, miniCamera);
 }
+const infoContainer = document.getElementById('planetInfoContainer');
+const planetCards = new Map(); // planetName -> cardElement
 
 animate();
-
-// Axes Helper
-// Red for X, Green for Y, Blue for Z
-const axesHelper = new THREE.AxesHelper( 20 );
-axesHelper.setColors( new THREE.Color( 0xff0000 ), new THREE.Color( 0x00ff00 ), new THREE.Color( 0x0000ff ) );
-scene.add( axesHelper );
 
 // Resize handling
 window.addEventListener('resize', () => {
@@ -189,3 +301,25 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+function updateOrbitVisibility() {
+    solarSystem.planets.forEach(planet => {
+        if (planet.orbit?.object) {
+            planet.orbit.trajectory.visible = showOrbitMesh;
+        }
+    });
+    solarSystem.moons.forEach(moon => {
+        if (moon.orbit?.object) {
+            moon.orbit.trajectory.visible = showOrbitMesh;
+        }
+    });
+}
+
+let showOrbitMesh = true;
+const toggleOrbitCheckbox = document.getElementById("toggleOrbitMesh");
+
+toggleOrbitCheckbox.addEventListener("change", (event) => {
+    showOrbitMesh = event.target.checked;
+    updateOrbitVisibility();
+});
+
