@@ -27,7 +27,6 @@ body {
 
 /* Upload File Input */
 #jsonFileInput {
-    padding: 10px 20px;
     background: rgba(10, 10, 30, 0.8);
     border: 2px solid #0ff;
     border-radius: 10px;
@@ -37,6 +36,9 @@ body {
     cursor: pointer;
     box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
     transition: all 0.3s ease;
+    width: 15vw;
+    height: 4vh;
+    font-family: 'Orbitron', sans-serif;
 }
 
 #jsonFileInput:hover {
@@ -164,7 +166,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 17vw;
+    width: 20vw;
 }
 
 #helpIcon {
@@ -177,7 +179,7 @@ body {
 #tooltip {
     display: none;
     position: absolute;
-    top: 6vh;
+    top: 8vh;
     right: 0vw;
     background: rgba(10, 10, 30, 0.9);
     color: #0ff;
