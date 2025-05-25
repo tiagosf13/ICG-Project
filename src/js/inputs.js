@@ -1,5 +1,5 @@
 import { SolarSystem } from 'solarSystem';
-import { replaceSolarSystem, scene } from './main.js'; // relative path if needed
+import { replaceSolarSystem, scene } from './main.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('jsonFileInput');
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('New solar system loaded and replaced');
             } catch (err) {
                 console.error('Error parsing JSON file:', err);
-                nameDisplay.textContent = '🚫 Failed to load system';
+                nameDisplay.textContent = 'Failed to load system';
             }
         };
 

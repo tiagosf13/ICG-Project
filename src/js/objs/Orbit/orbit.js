@@ -22,7 +22,7 @@ class Orbit {
         }
 
         // Apply inclination
-        this.trajectory.rotation.x = this.inclination;  // << Apply inclination to the trajectory
+        this.trajectory.rotation.x = this.inclination;  // Apply inclination to the trajectory
     }
 
     createTrajectory(radius, segments) {

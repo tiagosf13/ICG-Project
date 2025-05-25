@@ -16,7 +16,7 @@ body {
 }
 
 /* Container for upload + download buttons */
-#topControls {
+#leftContainer {
     position: absolute;
     top: 20px;
     left: 20px;
@@ -153,4 +153,93 @@ body {
     white-space: nowrap;
     transform: translate(-50%, -100%);
     z-index: var(--z-ui-cards);
+}
+
+
+#rightContainer {
+    position: absolute;
+    top: 20px;
+    right: 300px;
+    z-index: var(--z-minimap);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 17vw;
+}
+
+#helpIcon {
+    aspect-ratio: 1 / 1;
+    width: 2vw;
+    cursor: pointer;
+    filter: drop-shadow(0 0 1px #0ff);
+}
+
+#tooltip {
+    display: none;
+    position: absolute;
+    top: 6vh;
+    right: 0vw;
+    background: rgba(10, 10, 30, 0.9);
+    color: #0ff;
+    padding: 8px 12px;
+    border: 1px solid #0ff;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: var(--z-controls);
+    box-shadow: 0 0 10px #0ff;
+}
+
+#toggleControlsContainer:hover #tooltip {
+    display: block;
+}
+
+#toggleControlsLabel {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 10px; /* spacing between checkbox and text */
+    padding: 10px 20px;
+    background: rgba(10, 10, 30, 0.8);
+    border: 2px solid #0ff;
+    border-radius: 10px;
+    color: #0ff;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+#toggleControlsLabel input[type="checkbox"] {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background: #222;
+    border: 2px solid #0ff;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#toggleControlsLabel input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: #0ff;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+#toggleControlsLabel input[type="checkbox"]:checked {
+    background: #0ff;
+}
+
+#toggleControlsLabel input[type="checkbox"]:checked::before {
+    transform: translateX(20px);
+    background: #000;
 }

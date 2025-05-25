@@ -13,7 +13,7 @@ export class Planet {
         isMoon = false,
         texture,
         widthSegments = 16, 
-        heightSegments = 16, // testar com menos
+        heightSegments = 16,
         existingPlanets = [],
         star = null,
         center = null,
@@ -21,10 +21,10 @@ export class Planet {
     ) {
         this.name = name || this.randomName();
         if (isStar) {
-            this.radius = radius || (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO; // Fixed radius for the star
+            this.radius = radius || (this.randomDiameter() / 2) * params.STAR_PLANET_RATIO;
         }
         else if (isMoon) {
-            this.radius = radius || center.radius * params.MOON_PLANET_RATIO ; // Fixed radius for the moon
+            this.radius = radius || center.radius * params.MOON_PLANET_RATIO ;
         }
         else {
             this.radius = radius || (this.randomDiameter() / 2); // Random radius for planets
@@ -98,22 +98,42 @@ export class Planet {
     }             
 
     // Load and apply texture (if exists) or set default color
-    createMesh(widthSegments, heightSegments, texture) {
+    createMesh(widthSegments, heightSegments, texturePath) {
         let geometry = new THREE.SphereGeometry(this.radius, widthSegments, heightSegments);
-        
-        if (texture) {
-            const loader = new THREE.TextureLoader();
-            texture = loader.load(texture); // Load texture asynchronously
-            this.material = new THREE.MeshBasicMaterial({ map: texture });
+        const loader = new THREE.TextureLoader();
+        let textureMap = texturePath ? loader.load(texturePath) : null;
+
+        if (this.isStar) {
+            this.material = new THREE.MeshPhongMaterial({
+                map: textureMap,
+                emissiveMap: textureMap,
+                emissive: 0xffffff,
+                emissiveIntensity: 1.5,
+                color: textureMap ? 0xffffff : 0xFFEEAA
+            });
         } else {
-            this.material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+            // PLANETS and MOONS
+            this.material = new THREE.MeshPhongMaterial({
+                map: textureMap,
+            });
+            if (!textureMap) {
+                this.material.color.set(0xaaaaaa);
+            }
         }
 
         let mesh = new THREE.Mesh(geometry, this.material);
         mesh.position.set(this.position.x, this.position.y, this.position.z);
+
+        if (this.isStar) {
+            mesh.castShadow = true;    // Stars cast shadows
+            mesh.receiveShadow = false; // Stars don't receive shadows
+        } else {
+            mesh.castShadow = true;     // Planets and moons DO cast shadows
+            mesh.receiveShadow = true;  // Planets and moons DO receive shadows
+        }
         return mesh;
     }
-    
+        
 
     // Check if the new position overlaps with any existing planet or the star
     checkOverlap(existingPlanets, star) {

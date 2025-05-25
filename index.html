@@ -7,12 +7,32 @@
     <link rel="stylesheet" href="src/css/main.css">
 </head>
 <body>
-    <div id="topControls">
-        <input type="file" id="jsonFileInput" accept=".json" />
+    <div id="leftContainer">
+        <input type="file" id="jsonFileInput" accept=".json"/>
         <button id="downloadBtn">Download System</button>
     </div>
     <div id="systemNameDisplay">🌌 Default System</div>
-    <!-- <div id="miniMapFrame"></div> -->
+    <div id="rightContainer">
+        <label id="toggleControlsLabel">
+            Show Orbit Mesh
+            <input type="checkbox" id="toggleOrbitMesh" checked />
+        </label>
+        <div id="toggleControlsContainer">
+            <img id="helpIcon" src="src/img/help.png" alt="Help Icon" />
+            <div id="tooltip">
+                🎮 <strong>Controls</strong><br>
+                W – Move Forward<br>
+                A – Move Left<br>
+                S – Move Backward<br>
+                D – Move Right<br>
+                Space – Climb<br>
+                Shift – Dive<br>
+                Mouse – Look Around<br>
+                MWheel – Minimap Zoom In/Out<br>
+            </div>
+        </div>
+        
+    </div>
     <div id="minimapContainer">
         <div id="centeredImageContainer">
             <img id="minimap_arrow" src="src/img/minimap_arrow2.png" alt="Centered Image" />

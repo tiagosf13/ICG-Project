@@ -29,6 +29,7 @@ miniCamera.lookAt(0, 0, 0);               // Look at the center
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true; // Enable shadow maps
 document.body.appendChild(renderer.domElement);
 // Minimap Renderer
 const miniRenderer = new THREE.WebGLRenderer({ antialias: true });
@@ -40,9 +41,30 @@ minimapContainer.appendChild(miniRenderer.domElement);
 export let solarSystem = new SolarSystem(scene);
 scene.add(solarSystem.object);
 
+
+// Star Light (PointLight for illuminating planets)
+const starLight = new THREE.PointLight(0xffffff, 100, 0, 1);
+// If still too dim, try 12, 15, or even 20. Iterate to find a good value.
+starLight.castShadow = true;
+starLight.shadow.mapSize.width = 2048;
+starLight.shadow.mapSize.height = 2048;
+starLight.shadow.camera.near = 0;
+starLight.shadow.camera.far = params.STAR_RADIUS * 150; // Ensure this covers your system for shadows
+
+if (solarSystem.star && solarSystem.star.mesh) {
+    starLight.position.copy(solarSystem.star.mesh.position);
+} else {
+    starLight.position.set(0, 0, 0);
+}
+scene.add(starLight);
+
+// Ambient Light (for subtle fill light on dark sides)
+const ambientLight = new THREE.AmbientLight(0x333333, 1.5);
+scene.add(ambientLight);
+
 // Controls
 const controls = new PointerLockControls(camera, document.body);
-document.addEventListener('click', () => controls.lock());
+renderer.domElement.addEventListener('click', () => controls.lock());
 
 // Movement variables
 const moveSpeed = 0.6;
@@ -87,13 +109,7 @@ document.addEventListener('wheel', (event) => {
     );
 });
 
-
-
-
-
 export function replaceSolarSystem(newSystem) {
-    
-    // TODO: optionally dispose of geometry/textures if needed
     // Dispose of the old solar system
     solarSystem.moons.forEach(moon => {
         disposeObject3D(moon.mesh);
@@ -103,21 +119,27 @@ export function replaceSolarSystem(newSystem) {
         disposeObject3D(planet.mesh);
         scene.remove(planet.orbit.object);
     });
-    disposeObject3D(solarSystem.star.mesh);
-    scene.remove(solarSystem.star.orbit.object);
-    // Dispose of the star if needed
     if (solarSystem.star) {
         disposeObject3D(solarSystem.star.mesh);
         scene.remove(solarSystem.star.orbit.object);
     }
-    // Remove old one from the scene
     disposeObject3D(solarSystem.object);
     scene.remove(solarSystem.object);
-    
-    // Add new one
+
+    // Remove planet cards from DOM
+    planetCards.forEach(card => {
+        if (card.parentNode) {
+            card.parentNode.removeChild(card);
+        }
+    });
+    planetCards.clear();
+
+    // Add new solar system
     solarSystem = newSystem;
     scene.add(solarSystem.object);
+    updateOrbitVisibility();
 }
+
 
 function disposeObject3D(obj) {
     obj.traverse(child => {
@@ -259,6 +281,11 @@ function animate() {
         }
     });
 
+    if (solarSystem.star?.mesh) {
+        starLight.position.copy(solarSystem.star.mesh.getWorldPosition(new THREE.Vector3()));
+    }
+
+
     // Render the scene
     renderer.render(scene, camera);
     miniRenderer.render(scene, miniCamera);
@@ -268,15 +295,31 @@ const planetCards = new Map(); // planetName -> cardElement
 
 animate();
 
-// Axes Helper
-// Red for X, Green for Y, Blue for Z
-const axesHelper = new THREE.AxesHelper( 20 );
-axesHelper.setColors( new THREE.Color( 0xff0000 ), new THREE.Color( 0x00ff00 ), new THREE.Color( 0x0000ff ) );
-scene.add( axesHelper );
-
 // Resize handling
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+function updateOrbitVisibility() {
+    solarSystem.planets.forEach(planet => {
+        if (planet.orbit?.object) {
+            planet.orbit.trajectory.visible = showOrbitMesh;
+        }
+    });
+    solarSystem.moons.forEach(moon => {
+        if (moon.orbit?.object) {
+            moon.orbit.trajectory.visible = showOrbitMesh;
+        }
+    });
+}
+
+let showOrbitMesh = true;
+const toggleOrbitCheckbox = document.getElementById("toggleOrbitMesh");
+
+toggleOrbitCheckbox.addEventListener("change", (event) => {
+    showOrbitMesh = event.target.checked;
+    updateOrbitVisibility();
+});
+

@@ -1,10 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { params } from '../../../js/params/params.js';
 import { SolarSystem } from '../../../js/objs/SolarSystem/solar_system.js';
-import { Planet } from '../../../js/objs/Planet/planet.js';
-import * as THREE from 'three';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,7 +79,7 @@ function generateMultiple(count = 5) {
         if (!fs.existsSync(outputPath)) {
             const solarSystemJSON = generateSolarSystem(`generatedSystem_${index}`);
             fs.writeFileSync(outputPath, JSON.stringify(solarSystemJSON, null, 2));
-            console.log(`✅ Saved: ${filename}`);
+            console.log(`Saved: ${filename}`);
             generated++;
         }
 
