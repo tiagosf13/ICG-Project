@@ -9,7 +9,8 @@ const miniCameraMinY = 10;
 const miniCameraMaxY = 200;
 let orbitSpeedMultiplier = 1.0;
 const orbitSpeedStep = 0.1;
-
+let uiVisible = true;
+let showOrbitMesh = true;
 
 // Scene
 export const scene = new THREE.Scene();
@@ -84,6 +85,25 @@ document.addEventListener('keydown', (event) => {
     }
     if (event.code === 'ArrowDown') {
         orbitSpeedMultiplier = Math.max(orbitSpeedMultiplier - orbitSpeedStep, 0.1); // floor at 0.1x
+    }
+
+    if (event.code === 'KeyU') {
+        uiVisible = !uiVisible;
+        const uiElements = [
+            document.getElementById('leftContainer'),
+            document.getElementById('rightContainer'),
+            document.getElementById('systemNameDisplay'),
+            document.getElementById('minimapContainer'),
+            document.getElementById('planetInfoContainer')
+        ];
+        uiElements.forEach(el => {
+            if (el) el.style.display = uiVisible ? 'block' : 'none';
+        });
+    }
+
+    if (event.code === 'KeyM') {
+        showOrbitMesh = !showOrbitMesh;
+        updateOrbitVisibility();
     }
 });
 
@@ -329,12 +349,4 @@ function updateOrbitVisibility() {
         }
     });
 }
-
-let showOrbitMesh = true;
-const toggleOrbitCheckbox = document.getElementById("toggleOrbitMesh");
-
-toggleOrbitCheckbox.addEventListener("change", (event) => {
-    showOrbitMesh = event.target.checked;
-    updateOrbitVisibility();
-});
 

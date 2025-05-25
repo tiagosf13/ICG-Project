@@ -167,8 +167,8 @@ body {
     right: 300px;
     z-index: var(--z-minimap);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: ;
+    justify-content: end;
     width: 20vw;
 }
 
@@ -182,8 +182,8 @@ body {
 #tooltip {
     display: none;
     position: absolute;
-    top: 8vh;
-    right: 0vw;
+    top: 0vh;
+    right: 3vw;
     background: rgba(10, 10, 30, 0.9);
     color: #0ff;
     padding: 8px 12px;
