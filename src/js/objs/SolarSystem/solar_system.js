@@ -37,7 +37,7 @@ export class SolarSystem {
         this.setStar(star, scene); // Set the star in the solar system
 
         // Create planets from the JSON data
-        const planetsData = data.planets;
+        const planetsData = data.planets ? data.planets : [];
         planetsData.forEach(planetData => {
             const planet = new Planet(
                 planetData.name,
