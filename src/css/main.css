@@ -82,7 +82,30 @@ body {
     justify-content: space-between;
 }
 
-/* Upload File Input */
+#jsonFileInputLabel {
+    background: rgba(10, 10, 30, 0.8);
+    border: 2px solid #0ff;
+    border-radius: 10px;
+    color: #0ff;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20vw;
+    /* height: 100%; */
+    /* padding: 0; */
+}
+
+#jsonFileInputLabel:hover {
+    background: rgba(20, 20, 60, 0.9);
+    box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+    transform: scale(1.05);
+}
+
 #jsonFileInput {
     background: rgba(10, 10, 30, 0.8);
     border: 2px solid #0ff;
@@ -93,7 +116,7 @@ body {
     box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
     transition: all 0.3s ease;
     font-family: 'Orbitron', sans-serif;
-    /* display: flex; */
+    display: none;
     justify-content: center;
     align-items: center;
     width: 14vw;
