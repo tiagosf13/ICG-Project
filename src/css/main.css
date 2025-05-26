@@ -67,9 +67,10 @@ body {
     align-items: flex-start;
     /* padding: 0.5vw; */
     gap: 1vw;
-    padding: 1vw 0.5vw 0 0.5vw;
-    width: 83vw;
+    padding: 1vh 0.5vw;
+    width: 83.22vw;
     overflow-x: clip;
+    border-bottom: 0.2vh solid #0ff;
 }
 
 /* Container for upload + download buttons */
@@ -352,7 +353,6 @@ canvas {
 #orbitSpeedDisplay {
     color: white;
     font-family: 'Orbitron', sans-serif;
-    background-color: rgba(0, 0, 0, 0.6);
     padding: 1vh 1vw;
     border-radius: 4px;
     align-items: center;
