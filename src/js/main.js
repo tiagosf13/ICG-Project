@@ -89,17 +89,15 @@ document.addEventListener('keydown', (event) => {
     }
 
     if (event.code === 'KeyU') {
-        uiVisible = !uiVisible;
         const uiElements = [
-            document.getElementById('leftContainer'),
-            document.getElementById('rightContainer'),
-            document.getElementById('systemNameDisplay'),
+            document.getElementById('topBar'),
             document.getElementById('minimapContainer'),
             document.getElementById('planetInfoContainer')
         ];
         uiElements.forEach(el => {
-            if (el) el.style.display = uiVisible ? 'block' : 'none';
+            uiVisible ? el.classList.add('hidden-ui') : el.classList.remove('hidden-ui'); // Toggle visibility
         });
+        uiVisible = !uiVisible; // Toggle state
     }
 
     if (event.code === 'KeyM') {
