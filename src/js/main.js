@@ -33,11 +33,12 @@ miniCamera.lookAt(0, 0, 0);               // Look at the center
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 1);
 renderer.shadowMap.enabled = true; // Enable shadow maps
 document.body.appendChild(renderer.domElement);
 // Minimap Renderer
 const miniRenderer = new THREE.WebGLRenderer({ antialias: true });
-miniRenderer.setSize(250, 250);
+// miniRenderer.setSize(window.innerWidth * 0.15, window.innerWidth * 0.15);
 miniRenderer.setClearColor(0x000000, 1);
 minimapContainer.appendChild(miniRenderer.domElement);
 
@@ -74,7 +75,7 @@ renderer.domElement.addEventListener('click', () => controls.lock());
 const moveSpeed = 0.6;
 const keys = { KeyW: false, KeyA: false, KeyS: false, KeyD: false, Space: false, ShiftLeft: false };
 
-const orbitSpeedDisplay = document.getElementById('orbitSpeedDisplay');
+const orbitSpeedDisplayValue = document.getElementById('orbitSpeedDisplayValue');
 
 
 document.addEventListener('keydown', (event) => {
@@ -214,7 +215,7 @@ function animate() {
         const orbitSpeed = planet.isMoon 
             ? (2 * Math.PI) / (planet.orbit.radius * 50) * orbitSpeedMultiplier
             : (2 * Math.PI) / (planet.orbit.radius * 500) * orbitSpeedMultiplier;
-        orbitSpeedDisplay.textContent = `Speed: ${orbitSpeedMultiplier.toFixed(1)}x`;
+        orbitSpeedDisplayValue.textContent = `${orbitSpeedMultiplier.toFixed(1)}`;
         planet.updateRotationSpeed(deltaTime);
         planet.updateOrbit(orbitSpeed);
     });

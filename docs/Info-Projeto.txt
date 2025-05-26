@@ -1,0 +1,4 @@
+[Titulo do Projeto] - Solar Systems
+[Nome do Autor] - Tiago Fonseca (107266)
+[URL do Repositório no GitHub] - https://github.com/tiagosf13/ICG-Project
+[URL do Deploy] - https://www.solarsytems.pt/
