@@ -7,40 +7,47 @@
     <link rel="stylesheet" href="src/css/main.css">
 </head>
 <body>
-    <div id="leftContainer">
-        <input type="file" id="jsonFileInput" accept=".json"/>
-        <button id="downloadBtn">Download System</button>
-        <!-- Multiplier display -->
-        <div id="orbitSpeedDisplay" >Speed: 1.0x</div>
-    </div>
-    <div id="systemNameDisplay">🌌 Default System</div>
-    <div id="rightContainer">
-        <div id="toggleControlsContainer">
-            <img id="helpIcon" src="src/img/help.png" alt="Help Icon" />
-            <div id="tooltip">
-                🎮 <strong>Controls</strong><br>
-                W – Move Forward<br>
-                A – Move Left<br>
-                S – Move Backward<br>
-                D – Move Right<br>
-                U - Show/Hide UI<br>
-                M - Show/Hide Orbits<br>
-                Space – Climb<br>
-                Shift – Dive<br>
-                Mouse – Look Around<br>
-                MWheel – Minimap Zoom In/Out<br>
-                Arrow up/down - Change Speed<br>
+    <div id="topBar">
+        <div id="leftControls">
+            <input type="file" id="jsonFileInput" accept=".json"/>
+            <button id="downloadBtn">Download System</button>
+            <!-- Multiplier display -->
+            <div id="orbitSpeedDisplay" >
+                <div id="orbitSpeedDisplaySpeed">Speed:</div>
+                <div id="orbitSpeedDisplayValue">1.0</div>
+                <div id="orbitSpeedDisplayMultiplier">x</div>
             </div>
         </div>
-
-
+        <div id="centerControls">
+            <div id="systemNameDisplay">🌌 Default System</div>
+        </div>
+        <div id="rightControls">
+            <div id="toggleControlsContainer">
+                <img id="helpIcon" src="src/img/help.png" alt="Help Icon" />
+                <div id="tooltip">
+                    🎮 <strong>Controls</strong><br>
+                    W – Move Forward<br>
+                    A – Move Left<br>
+                    S – Move Backward<br>
+                    D – Move Right<br>
+                    U - Show/Hide UI<br>
+                    M - Show/Hide Orbits<br>
+                    Space – Climb<br>
+                    Shift – Dive<br>
+                    Mouse – Look Around<br>
+                    MWheel – Minimap Zoom In/Out<br>
+                    Arrow up/down - Change Speed<br>
+                </div>
+            </div>
+        </div>
     </div>
-
     <div id="minimapContainer">
         <div id="centeredImageContainer">
             <img id="minimap_arrow" src="src/img/minimap_arrow2.png" alt="Centered Image" />
         </div>
     </div>
+    
+
 
     <div id="planetInfoContainer"></div>
 
@@ -63,7 +70,6 @@
     <script type="module" src="src/js/inputs.js"></script>
     <script type="module" src="src/js/outputs.js"></script>
     <!-- Div which will hold the renderer output -->
-
 	<div id="WebGL-output"> </div>
 </body>
 </html>
